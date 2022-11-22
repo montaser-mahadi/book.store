@@ -1,10 +1,12 @@
 package com.samrt.dubai.book.store.entity;
 
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import javax.persistence.*;
 @Entity
 @Table
+@NoArgsConstructor
 @ToString
 public class Customer {
 

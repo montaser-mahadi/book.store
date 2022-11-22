@@ -8,23 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
 
     @Autowired
-    private OrderRepository orderRepository;
+    final private OrderRepository orderRepository;
     @Autowired
-    private BookRepository bookRepository;
+    final private BookRepository bookRepository;
     @Autowired
-    private CouponRepository couponRepository;
+    final private CouponRepository couponRepository;
 
 
-    public OrderService(OrderRepository orderRepository, BookRepository bookRepository) {
+    public OrderService(OrderRepository orderRepository,
+                        BookRepository bookRepository, CouponRepository couponRepository) {
         this.orderRepository = orderRepository;
         this.bookRepository = bookRepository;
+        this.couponRepository  = couponRepository;
     }
 
     public Order getOrderDetail(int orderId) {
@@ -35,10 +37,10 @@ public class OrderService {
     public double getCartAmount(List<ShoppingCart> shoppingCartList, String couponCode) {
 
         double totalCartAmount = 0;
-        double singleCartAmount = 0;
-        Integer availableQuantity = 0;
-        double percent =0;
-        double percentMinus=0;
+        double singleCartAmount;
+        int availableQuantity = 0;
+        double percent;
+        double percentMinus;
         //List<Integer> books =  shoppingCartList.stream().map((value)->value.getBookId()).collect(Collectors.toList());
         for (ShoppingCart cart : shoppingCartList) {
 
@@ -59,7 +61,7 @@ public class OrderService {
                  {
 
                      Coupon couponObject = optionalCoupon.get();
-                     if(couponObject.getClassification().getId()==classification.getId()) {
+                     if(Objects.equals(couponObject.getClassification().getId(), classification.getId())) {
 
                          percent = (couponObject.getDiscount()*book.getPrice()*cart.getQuantity())/100;
 
@@ -81,6 +83,14 @@ public class OrderService {
                          cart.setAmount(singleCartAmount);
                          bookRepository.save(book);
                      }
+                 }
+                 else {
+                     totalCartAmount = totalCartAmount + singleCartAmount;
+                     book.setAvailableQuantity(availableQuantity);
+                     availableQuantity=0;
+                     cart.setBookName(book.getName());
+                     cart.setAmount(singleCartAmount);
+                     bookRepository.save(book);
                  }
 
             }

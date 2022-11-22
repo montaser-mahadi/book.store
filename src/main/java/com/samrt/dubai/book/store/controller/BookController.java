@@ -19,12 +19,12 @@ public class BookController {
 
     // inject book repository in book controller by using notation @Autowired
     @Autowired
-    private BookRepository bookRepository;
-    @Autowired
-    private ClassificationRepository classificationRepository;
+    final private BookRepository bookRepository;
 
-    @Autowired
-    private ClassificationService classificationService;
+
+    public BookController(BookRepository bookRepository){
+        this.bookRepository = bookRepository;
+    }
 
     // get all book from MySQL Database
     @GetMapping(path="/books")
@@ -56,7 +56,7 @@ public class BookController {
     // save new book after checked it found in the database
 
     @PostMapping(path="/newBook")
-    public ResponseEntity<?> createBook(@RequestBody Book book)
+    public ResponseEntity<Book> createBook(@RequestBody Book book)
     {
         try {
             String massage="";
@@ -66,15 +66,13 @@ public class BookController {
                  massage = "This book name already exist!";
                 return ResponseEntity
                         .status(HttpStatus.FOUND)
-                        .body(massage);
+                        .body(book);
             }
             else {
                 massage = "this book saved!";
                 Book newBook = bookRepository.save(new Book(book.getName(), book.getDescription(),book.getAuthor(),
                         book.getClassification(), book.getPrice(), book.getAvailableQuantity(), book.getIsbn()));
-                return  ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(massage);
+                 return ResponseEntity.ok(book);
             }
 
         }catch (Exception exception)
