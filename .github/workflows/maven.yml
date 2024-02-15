@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql version: latest
-          postgresql db: wanasa_app
-          postgresql user: wanasa_app
-          postgresql password: wanasa_app
+#      - uses: Harmon758/postgresql-action@v1.0.0
+#        with:
+#          postgresql version: latest
+#          postgresql db: wanasa_app
+#          postgresql user: wanasa_app
+#          postgresql password: wanasa_app
 
       - uses: actions/checkout@v3
       - name: Set up JDK 8
